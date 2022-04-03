@@ -663,7 +663,7 @@ namespace NftSolidApp
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.ClientSize = new System.Drawing.Size(1180, 555);
+            this.ClientSize = new System.Drawing.Size(1181, 555);
             this.Controls.Add(this.cmbState);
             this.Controls.Add(this.txtUserWallet);
             this.Controls.Add(this.label17);

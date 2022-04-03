@@ -26,6 +26,20 @@ namespace NftSolidApp
         }
         void FillComboBox()
         {
+            cmbProtocol.Text = string.Empty;
+            cmbGender.Text = string.Empty;
+            cmbHat.Text = string.Empty;
+            cmbBackGround.Text = string.Empty;
+            cmbState.Text = string.Empty;
+            cmbSellStateChange.Text = string.Empty;
+            cmbStateFilter.Text= string.Empty;
+            cmbBuyStateChange.Text = string.Empty;
+            cmbUser.Text = string.Empty;
+            cmbUserFilter.Text = string.Empty;
+            CmbUserBuying.Text = string.Empty;
+            cmbNftNameFilter.Text = string.Empty;
+
+
             foreach (var item in Enum.GetValues(typeof(Protocol)))
             {
                 cmbProtocol.Items.Add(item);
@@ -60,12 +74,12 @@ namespace NftSolidApp
             cmbUserFilter.Items.AddRange(user.ToArray());
             CmbUserBuying.Items.AddRange(user.ToArray());
 
-            
+
             NftRepository nftRepository = NftRepositoryFactory.GetInstance();
             List<Nft> nfts = nftRepository.GetAll();
             foreach (var item in nfts)
-            {             
-                 cmbNftNameFilter.Items.Add(item);
+            {
+                cmbNftNameFilter.Items.Add(item);
             }
         }
         void FillListView()
@@ -156,7 +170,7 @@ namespace NftSolidApp
             string email = txtEmail.Text;
             decimal wallet = decimal.Parse(txtUserWallet.Text);
 
-            UserCreateCommand command = new UserCreateCommand(name, surname, email,wallet);
+            UserCreateCommand command = new UserCreateCommand(name, surname, email, wallet);
             UserCreateHandler handler = UserCreateHandlerFactory.GetInstance();
             ResponceBase responce = handler.Execute(command);
             MessageBox.Show(responce.Message);
@@ -180,19 +194,23 @@ namespace NftSolidApp
                 try
                 {
                     price = decimal.Parse(txtNftPrice.Text);
-
-                    NftCreateCommand command = new NftCreateCommand(nftName, protocol, description, gender, hat, background, price, UserId, state);
-                    NftCreateHandler handler = NftCreateHandlerFactory.GetInstance();
-                    ResponceBase responce = handler.Execute(command);
-                    MessageBox.Show(responce.Message);
                 }
                 catch (Exception)
                 {
+
                     MessageBox.Show("Satış Fiyatini Eklemelisiniz.");
+                    return;
                 }
+
             }
 
-            
+
+            NftCreateCommand command = new NftCreateCommand(nftName, protocol, description, gender, hat, background, price, UserId, state);
+            NftCreateHandler handler = NftCreateHandlerFactory.GetInstance();
+            ResponceBase responce = handler.Execute(command);
+            MessageBox.Show(responce.Message);
+
+
             FillListView();
             ClearControl();
         }
@@ -216,7 +234,7 @@ namespace NftSolidApp
                     catch (Exception)
                     {
                         MessageBox.Show("HATA Price Girmelisiniz!!!");
-                    }                
+                    }
                 }
                 else if (cmbSellStateChange.SelectedItem.ToString() == NftState.NotOnSalesList.ToString())
                 {
@@ -239,7 +257,7 @@ namespace NftSolidApp
                 if (cmbBuyStateChange.SelectedItem.ToString() == NftState.NotOnSalesList.ToString())
                 {
                     int userId = ((User)CmbUserBuying.SelectedItem).UserId;
-                    if (selectedNft.User.Wallet<selectedNft.Price)
+                    if (selectedNft.User.Wallet < selectedNft.Price)
                     {
                         MessageBox.Show("Bakiyeniz yetersiz HATA!!!");
                     }
@@ -249,34 +267,36 @@ namespace NftSolidApp
                         NftBuyNotOnSalesListHandler handler = NftBuyNotOnSalesListHandlerFactory.GetInstance();
                         ResponceBase responce = handler.Execute(command);
                         MessageBox.Show(responce.Message);
-                    }                   
+                    }
                 }
                 else if (cmbBuyStateChange.SelectedItem.ToString() == NftState.OnTheSalesList.ToString())
                 {
                     User user = (User)CmbUserBuying.SelectedItem;
+                    decimal? price = null;
 
-                    try
+                    if (user.Wallet < selectedNft.Price)
                     {
-                        decimal? price = Convert.ToDecimal(txtPriceBuy.Text);
-                        if (user.Wallet < selectedNft.Price)
-                        {
-                            MessageBox.Show("Bakiyeniz yetersiz HATA!!!");
-                        }
-                        else
-                        {
-                            NftBuyOnTheSalesListCommand command = new NftBuyOnTheSalesListCommand(user.UserId, price, selectedNft.NftId, selectedNft.State,user.Wallet);
-                            NftBuyOnTheSalesListHandler handler = NftBuyOnTheSalesListHandlerFactory.GetInstance();
-                            ResponceBase responce = handler.Execute(command);
-                            MessageBox.Show(responce.Message);
-                        }                        
+                        MessageBox.Show("Bakiyeniz yetersiz HATA!!!");
                     }
-                    catch (Exception)
+                    else
                     {
+                        try
+                        {
+                            price = Convert.ToDecimal(txtPriceBuy.Text);
+                        }
+                        catch (Exception)
+                        {
+                            MessageBox.Show("HATA Price Girmelisiniz!!!");
+                            return;
+                        }
+                        NftBuyOnTheSalesListCommand command = new NftBuyOnTheSalesListCommand(user.UserId,price, selectedNft.NftId, selectedNft.State, user.Wallet);
+                        NftBuyOnTheSalesListHandler handler = NftBuyOnTheSalesListHandlerFactory.GetInstance();
+                        ResponceBase responce = handler.Execute(command);
+                        MessageBox.Show(responce.Message);
+                    }
 
-                        MessageBox.Show("HATA Price Girmelisiniz!!!");
-                    }              
                 }
-            }          
+            }
             FillListView();
             ClearControl();
         }
@@ -291,7 +311,7 @@ namespace NftSolidApp
                 List<Nft> nftList = handler.Execute(query);
                 FillListNft(nftList);
             }
-            else if (cmbUserFilter.SelectedItem!=null)
+            else if (cmbUserFilter.SelectedItem != null)
             {
                 User selectedUser = (User)cmbUserFilter.SelectedItem;
                 GetUserQuery query = new GetUserQuery(selectedUser.UserId);
