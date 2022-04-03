@@ -2,8 +2,8 @@
 
 # Bu örnekde Oop, Solid ve .NetMailService temel yapıları kullanıldı.
 
-<img src="GuvenBoydak/SolidOopNetMailServiceExample/blob/master/NftSolidApp/İmages/Adsız.png">
-<img src="GuvenBoydak/SolidOopNetMailServiceExample/blob/master/NftSolidApp/İmages/huş.png">
+<img src="https://github.com/GuvenBoydak/SolidOopNetMailServiceExample/blob/master/NftSolidApp/%C4%B0mages/Ads%C4%B1z.png">
+<img src="https://github.com/GuvenBoydak/SolidOopNetMailServiceExample/blob/master/NftSolidApp/%C4%B0mages/hu%C5%9F.png">
 
 # ilk bölümde bir nft oluşturuyoruz. Eger State'i OnTheSalesList seçersek price girmek zorunda bırakıyoruz. Eger NotOnTheSalesList seçersek price girmeden devam edebiliyoruz.
 
